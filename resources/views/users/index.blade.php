@@ -79,9 +79,12 @@
                     </table>
                 </div>
 
-                <!-- أزرار التنقل بين الصفحات (مع ضبط الاتجاه والتنسيق الشامل) -->
-                <div class="p-4 border-t border-slate-100 bg-slate-50/50" dir="ltr">
-                    <div dir="rtl">
+                <!-- أزرار التنقل بين الصفحات وتوزيعها بشكل احترافي -->
+                <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="text-xs text-slate-500">
+                        عرض الصفحة <span class="font-bold text-slate-700">{{ $users->currentPage() }}</span> من <span class="font-bold text-slate-700">{{ $users->lastPage() }}</span> (إجمالي الموظفين: <span class="font-bold text-slate-700">{{ $users->total() }}</span>)
+                    </div>
+                    <div dir="ltr">
                         {{ $users->appends(request()->query())->links() }}
                     </div>
                 </div>
