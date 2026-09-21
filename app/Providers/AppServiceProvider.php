@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Pagination\Paginator; // أضفنا هذه المكتبة لدعم الـ Pagination عبر Tailwind
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,18 +23,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // تجاوز الصلاحيات تلقائياً لدور الأدمن — يجعل @can و $user->can() و authorize() تمرر مباشرة للمسؤولين
+        // 0. استخدام تصميم Tailwind كافتراضي لأزرار التنقل (Pagination) في كل المشروع
+        Paginator::useTailwind();
+
+        // 1. تجاوز الصلاحيات تلقائياً لدور الأدمن — يجعل @can و $user->can() و authorize() تمرر للمسؤولين
         Gate::before(function ($user, $ability) {
             if ($user->hasAnyRole(['admin', 'Admin', 'super-admin', 'Super Admin', 'مسؤول النظام'])) {
                 return true;
             }
         });
-        // 1. التقاط عمليات الإنشاء (Created)
+
+        // 2. التقاط عمليات الإنشاء (Created) للـ Audit Logs
         \Illuminate\Database\Eloquent\Model::created(function ($model) {
             $className = class_basename($model);
             if ($className === 'AuditLog' || $className === 'ActivityLog') return;
 
-            $identifier = $model->name ?? $model->transaction_number ?? $model->id ?? 'غير متوفر';
+            $identifier = $model->name ?? $model->username ?? $model->transaction_number ?? $model->id ?? 'غير متوفر';
 
             DB::table('audit_logs')->insert([
                 'user_id' => Auth::id() ?? 1,
@@ -46,12 +51,12 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
-        // 2. التقاط عمليات التحديث (Updated)
+        // 3. التقاط عمليات التحديث (Updated) للـ Audit Logs
         \Illuminate\Database\Eloquent\Model::updated(function ($model) {
             $className = class_basename($model);
             if ($className === 'AuditLog' || $className === 'ActivityLog') return;
 
-            $identifier = $model->name ?? $model->transaction_number ?? $model->id ?? 'غير متوفر';
+            $identifier = $model->name ?? $model->username ?? $model->transaction_number ?? $model->id ?? 'غير متوفر';
 
             DB::table('audit_logs')->insert([
                 'user_id' => Auth::id() ?? 1,
@@ -64,12 +69,12 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
-        // 3. التقاط عمليات الحذف (Deleted)
+        // 4. التقاط عمليات الحذف (Deleted) للـ Audit Logs
         \Illuminate\Database\Eloquent\Model::deleted(function ($model) {
             $className = class_basename($model);
             if ($className === 'AuditLog' || $className === 'ActivityLog') return;
 
-            $identifier = $model->name ?? $model->transaction_number ?? $model->id ?? 'غير متوفر';
+            $identifier = $model->name ?? $model->username ?? $model->transaction_number ?? $model->id ?? 'غير متوفر';
 
             DB::table('audit_logs')->insert([
                 'user_id' => Auth::id() ?? 1,
