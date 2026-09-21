@@ -79,9 +79,11 @@
                     </table>
                 </div>
 
-                <!-- أزرار التنقل بين الصفحات -->
-                <div class="p-4 border-t border-slate-100 bg-slate-50/50">
-                    {{ $users->links() }}
+                <!-- أزرار التنقل بين الصفحات (مع ضبط الاتجاه والتنسيق الشامل) -->
+                <div class="p-4 border-t border-slate-100 bg-slate-50/50" dir="ltr">
+                    <div dir="rtl">
+                        {{ $users->appends(request()->query())->links() }}
+                    </div>
                 </div>
             </div>
         </div>
