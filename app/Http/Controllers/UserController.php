@@ -17,7 +17,8 @@ class UserController extends Controller
     {
         $this->checkPermission('إدارة المستخدمين');
 
-        $users = User::with(['roles', 'permissions'])->paginate(10);
+        // جلب جميع المستخدمين مع أدوارهم وصلاحياتهم وترتيبهم بالأحدث لكي يظهر الموظف الجديد في الأعلى
+        $users = User::with(['roles', 'permissions'])->latest()->get();
         return view('users.index', compact('users'));
     }
 
@@ -34,7 +35,7 @@ class UserController extends Controller
         $this->checkPermission('إدارة المستخدمين');
 
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
+            'name'        => 'required|string|max:255',
             'username'   => 'required|string|max:255|unique:users,username',
             'email'      => 'nullable|string|email|max:255|unique:users,email',
             'password'   => 'required|string|min:6',
@@ -91,7 +92,7 @@ class UserController extends Controller
         $this->checkPermission('إدارة المستخدمين');
 
         $rules = [
-            'name'       => 'required|string|max:255',
+            'name'        => 'required|string|max:255',
             'username'   => 'required|string|max:255|unique:users,username,' . $user->id,
             'email'      => 'nullable|string|email|max:255|unique:users,email,' . $user->id,
             'phone'      => 'nullable|string|max:255',
