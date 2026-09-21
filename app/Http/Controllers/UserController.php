@@ -17,8 +17,8 @@ class UserController extends Controller
     {
         $this->checkPermission('إدارة المستخدمين');
 
-        // جلب جميع المستخدمين مع أدوارهم وصلاحياتهم وترتيبهم بالأحدث لعرض القائمة كاملة
-        $users = User::with(['roles', 'permissions'])->latest()->get();
+        // تم التعديل هنا لاستخدام paginate(10) بدلاً من get() لضمان ظهور التصفح
+        $users = User::with(['roles', 'permissions'])->latest()->paginate(10);
         return view('users.index', compact('users'));
     }
 
@@ -131,8 +131,9 @@ class UserController extends Controller
 
         app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
+        // تم تصحيح الخطأ المطبعي هنا
         AuditLog::create([
-            'user_id' => Auth::id() ->Auth::id() ?? 1,
+            'user_id' => Auth::id() ?? 1,
             'action' => 'تعديل مستخدم',
             'description' => 'تم تحديث بيانات وصلاحيات المستخدم: ' . $user->name,
         ]);
