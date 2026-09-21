@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <!-- الروابط والقوائم الجانبية مع شروط الصلاحيات المطابقة لصصورتك -->
+        <!-- الروابط والقوائم الجانبية الشاملة -->
         <div class="space-y-1.5 flex flex-col">
 
             <!-- لوحة التحكم -->
@@ -34,7 +34,7 @@
                     </div>
                 </a>
 
-                <!-- لوحة سير العمل والمراحل (مربوطة بصلاحية مرحلة 1 حسب اختيارك) -->
+                <!-- لوحة سير العمل والمراحل -->
                 @can('مرحلة 1: الاستلام والترقيم')
                 <a href="{{ route('transactions.workflow') }}"
                     class="flex items-center justify-between pr-8 pl-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('transactions.workflow') ? 'bg-blue-600/30 text-blue-300 font-bold border border-blue-500/40' : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200' }}">
@@ -89,19 +89,29 @@
             </a>
             @endcan
 
-            <!-- المستخدمين -->
+            <!-- إدارة المستخدمين (مجموعة شاملة للقائمة) -->
             @can('إدارة المستخدمين')
-            <a href="{{ route('users.index') }}"
-                class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 {{ request()->routeIs('users.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-600/40' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                👤 <span>المستخدمين</span>
-            </a>
+            <div class="space-y-1 pt-1">
+                <a href="{{ route('users.index') }}"
+                    class="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 {{ request()->routeIs('users.index') ? 'bg-blue-600 text-white shadow-md shadow-blue-600/40' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                    <div class="flex items-center gap-3">
+                        <span>👤</span> <span>المستخدمين</span>
+                    </div>
+                </a>
+
+                <!-- رابط فرعي لإضافة مستخدم جديد بسرعة -->
+                <a href="{{ route('users.create') }}"
+                    class="flex items-center gap-2 pr-8 pl-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 {{ request()->routeIs('users.create') ? 'bg-blue-600/30 text-blue-300 font-bold border border-blue-500/40' : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200' }}">
+                    <span>➕</span> <span>إضافة موظف / مستخدم</span>
+                </a>
+            </div>
             @endcan
 
             <!-- الصلاحيات -->
             @can('إدارة الصلاحيات')
             <a href="{{ route('roles.index') }}"
                 class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 {{ request()->routeIs('roles.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-600/40' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                🔑 <span>الصلاحيات</span>
+                🔑 <span>الصلاحيات والأدوار</span>
             </a>
             @endcan
 
