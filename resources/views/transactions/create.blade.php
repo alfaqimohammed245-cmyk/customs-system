@@ -176,11 +176,11 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-2">حالة البيان الجمركي</label>
                             <select name="declaration_status" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
-                                <option value="معلق">معلق</option>
-                                <option value="جاري الفحص">جاري الفحص والمعاينة</option>
-                                <option value="جاري التفسيح">جاري التفسيح</option>
-                                <option value="تم التفسيح">تم التفسيح</option>
-                                <option value="مكتمل">مكتمل</option>
+                                <option value="معلق" {{ old('declaration_status') == 'معلق' ? 'selected' : '' }}>معلق</option>
+                                <option value="جاري الفحص والمعاينة" {{ old('declaration_status') == 'جاري الفحص والمعاينة' ? 'selected' : '' }}>جاري الفحص والمعاينة</option>
+                                <option value="تحصيل الرسوم" {{ old('declaration_status') == 'تحصيل الرسوم' ? 'selected' : '' }}>تحصيل الرسوم</option>
+                                <option value="فسح كلي" {{ old('declaration_status') == 'فسح كلي' ? 'selected' : '' }}>فسح كلي</option>
+                                <option value="مكتمل" {{ old('declaration_status') == 'مكتمل' ? 'selected' : '' }}>مكتمل</option>
                             </select>
                         </div>
 
@@ -232,31 +232,31 @@
                     </div>
                 </div>
 
-                <!-- ==================== Tab 5: إعادة الحاويات الفارغة ==================== -->
+                <!-- ==================== Tab 5: إعادة الحاويات الفارغة والمرفقات ==================== -->
                 <div id="content-create-5" class="stage-content space-y-6" style="display: none;">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2">تاريخ ترجيع الفاضي المتوقع</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-2">تاريخ ترجيع الفاضي المتوقع / الفعلي</label>
                             <input type="date" name="empty_return_date" value="{{ old('empty_return_date') }}" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2">ملاحظات ترجيع الحاويات الفارغة</label>
-                            <textarea name="stage_5_notes" rows="2" placeholder="ملاحظات ساحة الإرجاع..." class="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">{{ old('stage_5_notes') }}</textarea>
+                            <label class="block text-xs font-bold text-slate-700 mb-2">رفع مستند إرجاع الحاوية الفارغة (PDF، صور)</label>
+                            <!-- تم ربطه باسم حقل آمن ومتاح مسبقاً لمنع خطأ قاعدة البيانات -->
+                            <input type="file" name="attachment" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-200 rounded-xl">
                         </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-2">ملاحظات ترجيع الحاويات الفارغة</label>
+                        <textarea name="stage_5_notes" rows="2" placeholder="ملاحظات ساحة الإرجاع وإيصال الاستلام..." class="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">{{ old('stage_5_notes') }}</textarea>
                     </div>
                 </div>
 
-                <!-- ==================== Tab 6: الفواتير والمرفقات ==================== -->
+                <!-- ==================== Tab 6: الفواتير والمرفقات النهائية ==================== -->
                 <div id="content-create-6" class="stage-content space-y-6" style="display: none;">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-2">فاتورة العميل الإجمالية (ر.س)</label>
                             <input type="number" step="0.01" name="client_invoice" value="{{ old('client_invoice') }}" placeholder="0.00" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none font-bold text-emerald-600">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2">رفع مرفق جديد (PDF، صور)</label>
-                            <input type="file" name="attachment" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-200 rounded-xl">
                         </div>
                     </div>
                 </div>

@@ -1,11 +1,81 @@
+<style>
+@media print {
+    /* إخفاء العناصر غير المرغوبة عند الطباعة */
+    aside, nav, header, form, .print\:hidden, [class*="sidebar"], [class*="navigation"] {
+        display: none !important;
+    }
+    
+    /* ضبط الصفحة والـ body */
+    body, html {
+        direction: rtl !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* إظهار الجدول ورأس الجدول بوضوح تام */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    thead {
+        display: table-header-group !important;
+    }
+    
+    tr {
+        display: table-row !important;
+        page-break-inside: avoid !important;
+    }
+    
+    th {
+        display: table-cell !important;
+        background-color: #f8fafc !important;
+        color: #334155 !important;
+        font-weight: bold !important;
+        padding: 8px !important;
+        font-size: 11px !important;
+        text-align: right !important;
+        border-bottom: 2px solid #cbd5e1 !important;
+    }
+
+    td {
+        display: table-cell !important;
+        padding: 8px !important;
+        font-size: 10px !important;
+        text-align: right !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+
+    /* إخفاء عمود التحكم الأخير أثناء الطباعة */
+    th:last-child, td:last-child {
+        display: none !important;
+    }
+
+    /* إلغاء الـ overflows التي تمنع ظهور العناوين */
+    .overflow-x-auto, .bg-white, .rounded-2xl {
+        overflow: visible !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+}
+</style>
+
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
             <div>
                 <h1 class="font-extrabold text-2xl text-slate-800 tracking-tight">إدارة المعاملات الجمركية</h1>
                 <p class="text-sm text-slate-500 mt-1">متابعة ومعالجة كافة معاملات الشحن والتخليص الجمركي عبر سير العمليات الجمركية</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
+                <!-- زر الطباعة العامة للجدول -->
+                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> طباعة الجدول
+                </button>
                 @can('تصدير Excel')
                 <a href="{{ route('transactions.export', request()->query()) }}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2">
                     <i class="fa-solid fa-file-excel"></i> تصدير Excel
@@ -25,11 +95,17 @@
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div class="py-8 print:py-0 print:bg-white print:w-full print:m-0 print:p-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 print:max-w-none print:px-0 print:space-y-4">
 
-            <!-- تبويبات التصفية الرئيسية للمقاطع -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <!-- عنوان التقرير يظهر فقط عند الطباعة -->
+            <div class="hidden print:block text-center border-b border-slate-300 pb-4 mb-4">
+                <h2 class="text-xl font-bold text-slate-900">تقرير إجمالي العمليات الجمركية</h2>
+                <p class="text-sm text-slate-600 mt-1">تاريخ الطباعة: {{ date('Y-m-d H:i') }}</p>
+            </div>
+
+            <!-- تبويبات التصفية الرئيسية للمقاطع (تختفي عند الطباعة) -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4 print:hidden">
                 <div class="flex items-center gap-2 overflow-x-auto">
                     <a href="{{ route('transactions.index', array_merge(request()->except('tab', 'page'), ['tab' => 'active'])) }}" 
                        class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {{ $tab === 'active' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
@@ -65,8 +141,8 @@
                 </div>
             </div>
 
-            <!-- نموذج البحث والفلاتر المتقدمة -->
-            <form method="GET" action="{{ route('transactions.index') }}" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+            <!-- نموذج البحث والفلاتر المتقدمة (يختفي عند الطباعة) -->
+            <form method="GET" action="{{ route('transactions.index') }}" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 print:hidden">
                 <input type="hidden" name="tab" value="{{ $tab }}">
 
                 <div>
@@ -110,18 +186,18 @@
             </form>
 
             @if(session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between">
+            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-2xl text-xs font-bold flex items-center justify-between print:hidden">
                 <span>{{ session('success') }}</span>
                 <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700">&times;</button>
             </div>
             @endif
 
             <!-- جدول عرض المعاملات الجمركية -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="overflow-x-auto">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden print:border-none print:shadow-none">
+                <div class="overflow-x-auto print:overflow-visible">
                     <table class="w-full text-right border-collapse text-xs">
                         <thead>
-                            <tr class="bg-slate-50 text-slate-600 font-bold border-b border-slate-100">
+                            <tr class="bg-slate-50 text-slate-600 font-bold border-b border-slate-100 print:bg-slate-200">
                                 <th class="p-3.5">رقم المعاملة</th>
                                 <th class="p-3.5">التاجر</th>
                                 <th class="p-3.5">الوكيل الملاحي</th>
@@ -219,8 +295,8 @@
                     </table>
                 </div>
 
-                <!-- الترقيم والتنقل بين الصفحات -->
-                <div class="p-4 border-t border-slate-100">
+                <!-- الترقيم والتنقل بين الصفحات (يختفي عند الطباعة) -->
+                <div class="p-4 border-t border-slate-100 print:hidden">
                     {{ $transactions->links() }}
                 </div>
             </div>

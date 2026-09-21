@@ -17,7 +17,7 @@ class UserController extends Controller
     {
         $this->checkPermission('إدارة المستخدمين');
 
-        // جلب جميع المستخدمين مع أدوارهم وصلاحياتهم وترتيبهم بالأحدث لكي يظهر الموظف الجديد في الأعلى
+        // جلب جميع المستخدمين مع أدوارهم وصلاحياتهم وترتيبهم بالأحدث لعرض القائمة كاملة
         $users = User::with(['roles', 'permissions'])->latest()->get();
         return view('users.index', compact('users'));
     }
@@ -53,21 +53,17 @@ class UserController extends Controller
         $roleName = $request->input('role');
         unset($validated['role']);
 
-        // إزالة الصلاحيات من مصفوفة الإنشاء لكي لا تحدث خطأ أثناء الـ create
         $permissionsInput = $request->input('permissions', []);
         unset($validated['permissions']);
 
         $user = User::create($validated);
 
-        // تعيين الدور إن وجد
         if ($roleName) {
             $user->syncRoles([$roleName]);
         }
 
-        // تقييد وتحديد الصلاحيات المباشرة للمستخدم
         $user->syncPermissions($permissionsInput);
 
-        // مسح كاش الصلاحيات فوراً لتطبيق القيود في نفس اللحظة
         app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         AuditLog::create([
@@ -123,24 +119,20 @@ class UserController extends Controller
         $permissionsInput = $request->input('permissions', []);
         unset($validated['permissions']);
 
-        // تحديث البيانات الأساسية للمستخدم
         $user->update($validated);
 
-        // تحديث الأدوار (Roles)
         if ($roleName) {
             $user->syncRoles([$roleName]);
         } else {
             $user->syncRoles([]);
         }
 
-        // التقييد الفعلي: تحديث الصلاحيات المباشرة بحيث يتم إزالة أي صلاحية غير محددة وإبقاء المحددة فقط
         $user->syncPermissions($permissionsInput);
 
-        // مسح كاش الصلاحيات فوراً لتطبيق القيود الجديدة
         app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         AuditLog::create([
-            'user_id' => Auth::id() ?? 1,
+            'user_id' => Auth::id() ->Auth::id() ?? 1,
             'action' => 'تعديل مستخدم',
             'description' => 'تم تحديث بيانات وصلاحيات المستخدم: ' . $user->name,
         ]);

@@ -39,7 +39,7 @@
                                     <span>{{ $user->name }}</span>
                                 </td>
                                 <td class="p-3.5 font-mono text-slate-600">{{ $user->username }}</td>
-                                <td class="p-3.5 text-slate-500">{{ $user->email }}</td>
+                                <td class="p-3.5 text-slate-500">{{ $user->email ?? '---' }}</td>
                                 <td class="p-3.5 text-slate-500">{{ $user->department ?? '---' }} - {{ $user->job_title ?? '---' }}</td>
                                 <td class="p-3.5">
                                     @forelse($user->roles as $role)
@@ -77,10 +77,6 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div>
-
-                <div class="p-4 border-t border-slate-100">
-                    {{ $users->links() }}
                 </div>
             </div>
         </div>

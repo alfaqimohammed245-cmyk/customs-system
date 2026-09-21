@@ -257,9 +257,16 @@ class TransactionController extends Controller
         $newTransaction = null;
 
         DB::transaction(function () use ($request, &$newTransaction) {
-            $data = $request->except(['_token', '_method']);
+            // استبعاد الـ tokens وحقول الواجهة المؤقتة غير الموجودة في جدول قاعدة البيانات لتجنب أخطاء QueryException
+            $data = $request->except([
+                '_token', 
+                '_method', 
+                'stage_1_completed',
+                'empty_return_address', 
+                'empty_return_attachment'
+            ]);
 
-            // معالجة المرفق
+            // معالجة المرفق بأمان
             if ($request->hasFile('attachment')) {
                 $data['attachment'] = $request->file('attachment')->store('attachments', 'public');
             } else {
@@ -316,6 +323,10 @@ class TransactionController extends Controller
                 $data['current_stage']        = 2;
                 $data['progress_percentage']  = 16;
             }
+
+            // فلترة نهائية للتأكد من عدم تمرير أعمدة غير موجودة بجدول transactions
+            $tableColumns = Schema::getColumnListing('transactions');
+            $data = array_intersect_key($data, array_flip($tableColumns));
 
             $newTransaction = Transaction::create($data);
             $newTransaction->recalculateProgress();
@@ -412,7 +423,13 @@ class TransactionController extends Controller
         $isAdmin = $user->hasAnyRole(['admin', 'Admin', 'super-admin', 'Super Admin', 'مسؤول النظام']) || $user->can('تعديل كافة المراحل');
 
         DB::transaction(function () use ($request, $transaction, $user, $isAdmin) {
-            $data = $request->except(['_token', '_method']);
+            // استبعاد الـ tokens وحقول الواجهة المؤقتة لتفادي أي خطأ في قاعدة البيانات
+            $data = $request->except([
+                '_token', 
+                '_method', 
+                'empty_return_address', 
+                'empty_return_attachment'
+            ]);
 
             // معالجة المرفق
             if ($request->hasFile('attachment')) {
@@ -477,6 +494,10 @@ class TransactionController extends Controller
                     );
                 }
             }
+
+            // فلترة البيانات لضمان تمرير الأعمدة الموجودة فقط في جدول transactions
+            $tableColumns = Schema::getColumnListing('transactions');
+            $data = array_intersect_key($data, array_flip($tableColumns));
 
             $transaction->fill($data);
             $transaction->recalculateProgress();
