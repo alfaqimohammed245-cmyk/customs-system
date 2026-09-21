@@ -17,8 +17,9 @@ class UserController extends Controller
     {
         $this->checkPermission('إدارة المستخدمين');
 
-        // تم التعديل هنا لاستخدام paginate(10) بدلاً من get() لضمان ظهور التصفح
+        // جلب المستخدمين مع الأدوار والصلاحيات وتقسيمهم إلى صفحات (10 لكل صفحة)
         $users = User::with(['roles', 'permissions'])->latest()->paginate(10);
+        
         return view('users.index', compact('users'));
     }
 
@@ -36,14 +37,14 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name'        => 'required|string|max:255',
-            'username'   => 'required|string|max:255|unique:users,username',
-            'email'      => 'nullable|string|email|max:255|unique:users,email',
-            'password'   => 'required|string|min:6',
-            'phone'      => 'nullable|string|max:255',
-            'department' => 'nullable|string|max:255',
-            'job_title'  => 'nullable|string|max:255',
-            'color'      => 'nullable|string|max:255',
-            'role'       => 'nullable|string|exists:roles,name',
+            'username'    => 'required|string|max:255|unique:users,username',
+            'email'       => 'nullable|string|email|max:255|unique:users,email',
+            'password'    => 'required|string|min:6',
+            'phone'       => 'nullable|string|max:255',
+            'department'  => 'nullable|string|max:255',
+            'job_title'   => 'nullable|string|max:255',
+            'color'       => 'nullable|string|max:255',
+            'role'        => 'nullable|string|exists:roles,name',
             'permissions' => 'array',
         ]);
 
@@ -67,8 +68,8 @@ class UserController extends Controller
         app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         AuditLog::create([
-            'user_id' => Auth::id() ?? 1,
-            'action' => 'إضافة مستخدم',
+            'user_id'     => Auth::id() ?? 1,
+            'action'      => 'إضافة مستخدم',
             'description' => 'تم إضافة مستخدم جديد وتحديد صلاحياته: ' . $user->name,
         ]);
 
@@ -89,13 +90,13 @@ class UserController extends Controller
 
         $rules = [
             'name'        => 'required|string|max:255',
-            'username'   => 'required|string|max:255|unique:users,username,' . $user->id,
-            'email'      => 'nullable|string|email|max:255|unique:users,email,' . $user->id,
-            'phone'      => 'nullable|string|max:255',
-            'department' => 'nullable|string|max:255',
-            'job_title'  => 'nullable|string|max:255',
-            'color'      => 'nullable|string|max:255',
-            'role'       => 'nullable|string|exists:roles,name',
+            'username'    => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email'       => 'nullable|string|email|max:255|unique:users,email,' . $user->id,
+            'phone'       => 'nullable|string|max:255',
+            'department'  => 'nullable|string|max:255',
+            'job_title'   => 'nullable|string|max:255',
+            'color'       => 'nullable|string|max:255',
+            'role'        => 'nullable|string|exists:roles,name',
             'permissions' => 'array',
         ];
 
@@ -131,10 +132,9 @@ class UserController extends Controller
 
         app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        // تم تصحيح الخطأ المطبعي هنا
         AuditLog::create([
-            'user_id' => Auth::id() ?? 1,
-            'action' => 'تعديل مستخدم',
+            'user_id'     => Auth::id() ?? 1,
+            'action'      => 'تعديل مستخدم',
             'description' => 'تم تحديث بيانات وصلاحيات المستخدم: ' . $user->name,
         ]);
 
@@ -150,12 +150,13 @@ class UserController extends Controller
         }
 
         AuditLog::create([
-            'user_id' => Auth::id() ?? 1,
-            'action' => 'حذف مستخدم',
+            'user_id'     => Auth::id() ?? 1,
+            'action'      => 'حذف مستخدم',
             'description' => 'تم حذف حساب المستخدم: ' . $user->name,
         ]);
 
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'تم حذف المستخدم بنجاح');
+        
+        return redirect()->route('users.index')->with('status', 'تم حذف المستخدم بنجاح');
     }
 }
