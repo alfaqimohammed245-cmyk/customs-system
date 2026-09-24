@@ -247,16 +247,16 @@
                             <input type="date" name="declaration_date" value="{{ old('declaration_date', $transaction->declaration_date ? (is_object($transaction->declaration_date) ? $transaction->declaration_date->format('Y-m-d') : \Carbon\Carbon::parse($transaction->declaration_date)->format('Y-m-d')) : '') }}" {{ !($userStagePermissions[3] ?? false) ? 'readonly' : '' }} class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2">حالة البيان الجمركي</label>
-                            <select name="declaration_status" {{ !($userStagePermissions[3] ?? false) ? 'disabled' : '' }} class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
-                                <option value="معلق" {{ old('declaration_status', $transaction->declaration_status) == 'معلق' ? 'selected' : '' }}>معلق</option>
-                                <option value="جاري الفحص" {{ old('declaration_status', $transaction->declaration_status) == 'جاري الفحص' ? 'selected' : '' }}>جاري الفحص والمعاينة</option>
-                                <option value="جاري التفسيح" {{ old('declaration_status', $transaction->declaration_status) == 'جاري التفسيح' ? 'selected' : '' }}>جاري التفسيح</option>
-                                <option value="تم التفسيح" {{ old('declaration_status', $transaction->declaration_status) == 'تم التفسيح' ? 'selected' : '' }}>تم التفسيح</option>
-                                <option value="مكتمل" {{ old('declaration_status', $transaction->declaration_status) == 'مكتمل' ? 'selected' : '' }}>مكتمل</option>
-                            </select>
-                        </div>
+                           <div>
+    <label class="block text-xs font-bold text-slate-700 mb-2">حالة البيان الجمركي</label>
+    <select name="declaration_status" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+        <option value="معلق" {{ old('declaration_status') == 'معلق' ? 'selected' : '' }}>معلق</option>
+        <option value="جاري الفحص" {{ old('declaration_status') == 'جاري الفحص' ? 'selected' : '' }}>جاري الفحص والمعاينة</option>
+        <option value="تحصيل الرسوم" {{ old('declaration_status') == 'تحصيل الرسوم' ? 'selected' : '' }}>تحصيل الرسوم</option>
+        <option value="جاهز" {{ old('declaration_status') == 'جاهز' ? 'selected' : '' }}>جاهز</option>
+        <option value="فسح كلي" {{ old('declaration_status') == 'فسح كلي' ? 'selected' : '' }}>فسح كلي</option>
+    </select>
+</div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-2">تاريخ التفريغ</label>
