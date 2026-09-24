@@ -179,8 +179,8 @@
                                 <option value="معلق" {{ old('declaration_status') == 'معلق' ? 'selected' : '' }}>معلق</option>
                                 <option value="جاري الفحص والمعاينة" {{ old('declaration_status') == 'جاري الفحص والمعاينة' ? 'selected' : '' }}>جاري الفحص والمعاينة</option>
                                 <option value="تحصيل الرسوم" {{ old('declaration_status') == 'تحصيل الرسوم' ? 'selected' : '' }}>تحصيل الرسوم</option>
+                                <option value=" جاهز" {{ old('declaration_status') == 'جاهز' ? 'selected' : '' }}>جاهز</option>
                                 <option value="فسح كلي" {{ old('declaration_status') == 'فسح كلي' ? 'selected' : '' }}>فسح كلي</option>
-                                <option value="مكتمل" {{ old('declaration_status') == 'مكتمل' ? 'selected' : '' }}>مكتمل</option>
                             </select>
                         </div>
 
